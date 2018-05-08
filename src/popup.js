@@ -1,8 +1,5 @@
-var JiraToFeature = function() {
+var JiraToBranch = function() {
     var REQUEST_TEXT = 'jira_issue_name_request',
-        OK = 0,
-        WRONG_VERSION = 1,
-        EMPTY = 2,
         self = this,
         containerBlock = document.getElementById('container'),
         errorBlock = document.getElementById('error'),
@@ -19,7 +16,7 @@ var JiraToFeature = function() {
             var tab = tabs[0];
 
             chrome.tabs.sendMessage(tab.id, {text: REQUEST_TEXT}, function (response) {
-                if (OK === validateResponse(response)) {
+                if (validateResponse(response)) {
                     renderNames(response);
                 } else {
                     errorNoData(tab);
@@ -45,7 +42,7 @@ var JiraToFeature = function() {
     }
 
     function renderNames(list) {
-        Feature.loadOptions(function(){
+        Branch.loadOptions(function(){
             var entryTemplate = document.createElement('div'),
                 entry;
 
@@ -54,7 +51,7 @@ var JiraToFeature = function() {
 
             for (var i = 0; i < list.length; i++) {
                 entry = entryTemplate.cloneNode(true);
-                entry.childNodes[0].innerText = Feature.format(list[i]);
+                entry.childNodes[0].innerText = Branch.format(list[i]);
                 entry.childNodes[1].addEventListener('click', onCopyClick);
                 containerBlock.appendChild(entry);
             }
@@ -64,11 +61,7 @@ var JiraToFeature = function() {
     }
 
     function validateResponse(response) {
-        if (response && response.length) {
-            return OK;
-        }
-
-        return EMPTY;
+        return response; //&& response.length;
     }
 
     function errorNoData(tab) {
@@ -82,6 +75,6 @@ var JiraToFeature = function() {
 };
 
 document.addEventListener("DOMContentLoaded", function() {
-    var app = new JiraToFeature();
+    var app = new JiraToBranch();
     app.init();
 });

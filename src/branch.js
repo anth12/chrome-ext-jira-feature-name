@@ -1,4 +1,4 @@
-Feature = {
+Branch = {
     options: {
         keyCase: "upper",
         keyDelimiter: "-",
@@ -6,43 +6,62 @@ Feature = {
         summaryCase: "lower",
         summaryDelimiter: "-",
         maxLength: 100,
-        ignoredPattern: null
+        ignoredPattern: null,
+        typeMap: {
+            'feature': ['story', 'epic', 'improve'],
+            'bugfix': ['bug'],
+            'tech': ['tech'],
+            'hotfix': ['support']
+        }
     },
 
     /**
      * Formats source key-summary string using passed options.
      *
      * @param {object} options
-     * @param {string} source
+     * @param {object} source
      *
      * @returns {string}
      */
     format: function (source) {
-        var result = '',
-            index,
-            key,
-            summary;
+        var result = '';
+        
+        for (var type in Branch.options.typeMap) {
+            if (Branch.options.typeMap.hasOwnProperty(type)) {
+                                
+                var patterns = Branch.options.typeMap[type];
+                
+                for(var pattern in patterns) {
+                    if(source.type.toLowerCase().indexOf(patterns[pattern]) > -1) {
+                        result += `${type}/`;
+                        break;
+                    }
+                }
 
-        index = source.indexOf(' ');
-        key = ignore(source.slice(0, index), Feature.options.ignoredPattern);
+                if(result.length)
+                    break;
+            }
+        }
+
+        var key = ignore(source.key, Branch.options.ignoredPattern);
         key = clean(key);
-        key = fixCase(key, Feature.options.keyCase, Feature.options.keyDelimiter);
+        key = fixCase(key, Branch.options.keyCase, Branch.options.keyDelimiter);
 
-        summary = ignore(source.slice(index + 1), Feature.options.ignoredPattern);
+        var summary = ignore(source.summary, Branch.options.ignoredPattern);
         summary = clean(summary);
-        summary = fixCase(summary, Feature.options.summaryCase, Feature.options.summaryDelimiter);
+        summary = fixCase(summary, Branch.options.summaryCase, Branch.options.summaryDelimiter);
 
         if (key && summary) {
-            result = key + Feature.options.delimiter + summary;
+            result += key + Branch.options.delimiter + summary;
         } else if (key) {
-            result = key;
+            result += key;
         } else if (summary) {
-            result = summary;
+            result += summary;
         } else {
             return "";
         }
 
-        return result.slice(0, Feature.options.maxLength);
+        return result.slice(0, Branch.options.maxLength);
         
         function ignore(value, pattern) {
 
@@ -86,11 +105,11 @@ Feature = {
     },
 
     updateOptions: function (key, value, callback) {
-        Feature.options[key] = value;
+        Branch.options[key] = value;
 
-        chrome.storage.sync.set(Feature.options, function () {
+        chrome.storage.sync.set(Branch.options, function () {
             if (typeof callback == 'function') {
-                callback(Feature.options);
+                callback(Branch.options);
             }
         });
     },
@@ -98,9 +117,9 @@ Feature = {
     loadOptions: function (callback) {
         chrome.storage.sync.get(function (items) {
 
-            for (var key in Feature.options) {
+            for (var key in Branch.options) {
                 if (items.hasOwnProperty(key)) {
-                    Feature.options[key] = items[key];
+                    Branch.options[key] = items[key];
                 }
             }
 
