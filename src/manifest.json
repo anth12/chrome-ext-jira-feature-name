@@ -1,8 +1,8 @@
 {
     "manifest_version": 2,
-    "name": "Convert JIRA issue to branch name",
+    "name": "JIRA issue to branch name",
     "short_name": "JIRA Issue to Branch",
-    "version": "0.6.0",
+    "version": "0.6.1",
 
     "content_scripts": [{
        "matches": ["<all_urls>"],
