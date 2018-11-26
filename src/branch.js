@@ -8,8 +8,8 @@ Branch = {
         maxLength: 100,
         ignoredPattern: null,
         typeMap: {
-            'feature': ['story', 'epic', 'improve'],
-            'bugfix': ['bug'],
+            'feature': ['story', 'epic', 'improve', 'change'],
+            'bugfix': ['bug', 'defect'],
             'tech': ['tech'],
             'hotfix': ['support']
         }
