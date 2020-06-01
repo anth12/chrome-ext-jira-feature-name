@@ -11,7 +11,7 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         data.push({
         	key: document.getElementById('key-val').innerText, 
         	summary: document.getElementById('summary-val').innerText,
-            type: document.getElementById('type-val').innerText
+            type: document.getElementById('type-val').innerText.trim()
         });
 
         var parentIssue = document.getElementById('parent_issue_summary');
